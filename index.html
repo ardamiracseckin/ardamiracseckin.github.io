@@ -177,7 +177,7 @@
                 container.innerHTML = ''; 
                 
                 repos.forEach(repo => {
-                    if (repo.name.toLowerCase() !== username.toLowerCase() && repo.name.toLowerCase() !== 'ardamiracseckin.github.io' && !repo.fork) {
+                    if (repo.name.toLowerCase() !== username.toLowerCase() && repo.name.toLowerCase() !== 'ardamiracseckin.github.io' ) {
                         const card = document.createElement('div');
                         card.className = 'project-card';
                         const language = repo.language ? `🔹 ${repo.language}` : '';
