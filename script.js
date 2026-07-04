@@ -15,7 +15,7 @@ const translations = {
         "skills.ai": "AI & Data",
         "skills.tools": "Tools & Concepts",
         "projects.title": "Featured Projects",
-        "projects.other": "Other Projects",
+        "projects.other": "All My GitHub Projects",
         "projects.viewGithub": "View on GitHub →",
         "projects.readme": "📖 Project Details",
         "projects.loading": "Loading projects from GitHub...",
@@ -43,7 +43,7 @@ const translations = {
         "skills.ai": "Yapay Zekâ & Veri",
         "skills.tools": "Araçlar & Kavramlar",
         "projects.title": "Öne Çıkan Projeler",
-        "projects.other": "Diğer Projeler",
+        "projects.other": "Tüm GitHub Projelerim",
         "projects.viewGithub": "GitHub'da Gör →",
         "projects.readme": "📖 Proje Detayları",
         "projects.loading": "Projeler GitHub'dan yükleniyor...",
@@ -104,14 +104,8 @@ const featuredProjects = [
 ];
 
 const GITHUB_USER = "ardamiracseckin";
-const EXCLUDED_REPOS = [
-    "ardamiracseckin",
-    "ardamiracseckin.github.io",
-    "priceguard",
-    "smart-stadium-iot-simulation",
-    "english-news-classification",
-    "two-pass-compiler-project"
-];
+// Boş liste: tüm public repolar "Tüm GitHub Projelerim" bölümünde listelenir
+const EXCLUDED_REPOS = [];
 
 // ===== State =====
 let currentLang = localStorage.getItem("lang") || "en";
