@@ -6,8 +6,10 @@ const translations = {
         "nav.projects": "Projects",
         "nav.contact": "Contact",
         "hero.greeting": "Hi, I'm",
+        "hero.status": "Open to opportunities",
         "hero.cta_projects": "View My Projects",
         "hero.cta_contact": "Get In Touch",
+        "a11y.skip": "Skip to content",
         "about.title": "About Me",
         "about.text": "I'm a 3rd-year Software Engineering student focused on backend development and artificial intelligence. I enjoy turning ideas into working software — from deep-learning NLP models and OCR systems to IoT network simulations and automation bots. I care about clean, object-oriented code and actively use modern AI tools to speed up and improve my development workflow. I'm currently looking for opportunities to grow as an engineer and contribute to real-world projects.",
         "skills.title": "Technical Skills",
@@ -34,8 +36,10 @@ const translations = {
         "nav.projects": "Projeler",
         "nav.contact": "İletişim",
         "hero.greeting": "Merhaba, ben",
+        "hero.status": "Yeni fırsatlara açığım",
         "hero.cta_projects": "Projelerime Göz At",
         "hero.cta_contact": "Bana Ulaş",
+        "a11y.skip": "İçeriğe geç",
         "about.title": "Hakkımda",
         "about.text": "Yazılım Mühendisliği 3. sınıf öğrencisiyim; backend geliştirme ve yapay zekâya odaklanıyorum. Derin öğrenme tabanlı NLP modellerinden OCR sistemlerine, IoT ağ simülasyonlarından otomasyon botlarına kadar fikirleri çalışan yazılımlara dönüştürmekten keyif alıyorum. Temiz ve nesne yönelimli koda önem veriyor, geliştirme sürecimi hızlandırmak için modern yapay zekâ araçlarını aktif olarak kullanıyorum. Mühendis olarak gelişebileceğim ve gerçek projelere katkı sağlayabileceğim fırsatlar arıyorum.",
         "skills.title": "Teknik Yetenekler",
@@ -186,7 +190,7 @@ function renderFeatured() {
     grid.innerHTML = "";
     featuredProjects.forEach(project => {
         const card = document.createElement("div");
-        card.className = "project-card";
+        card.className = "project-card card-enter";
 
         const title = document.createElement("h3");
         title.textContent = project.name;
@@ -217,6 +221,7 @@ function renderFeatured() {
         card.append(title, desc, tags, links);
         grid.appendChild(card);
     });
+    revealCards(grid);
 }
 
 // ===== Other repos from GitHub API =====
@@ -254,7 +259,7 @@ function renderRepos() {
 
     cachedRepos.forEach(repo => {
         const card = document.createElement("div");
-        card.className = "project-card";
+        card.className = "project-card card-enter";
 
         const title = document.createElement("h3");
         title.textContent = repo.name.replace(/-/g, " ");
@@ -280,6 +285,7 @@ function renderRepos() {
         card.append(title, readmeBtn, links);
         grid.appendChild(card);
     });
+    revealCards(grid);
 }
 
 // ===== README modal =====
@@ -320,6 +326,52 @@ function setupModal() {
     });
 }
 
+// ===== Staggered card entrance =====
+const cardObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const cards = [...entry.target.parentElement.querySelectorAll(".card-enter")];
+            const idx = Math.max(0, cards.indexOf(entry.target));
+            entry.target.style.transitionDelay = `${Math.min(idx, 6) * 70}ms`;
+            entry.target.classList.add("card-in");
+            cardObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.15 });
+
+function revealCards(container) {
+    container.querySelectorAll(".card-enter:not(.card-in)").forEach(card => cardObserver.observe(card));
+}
+
+// ===== Cursor spotlight on cards (event delegation) =====
+function setupSpotlight() {
+    document.addEventListener("pointermove", event => {
+        const card = event.target.closest(".project-card, .skill-card");
+        if (!card) return;
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--mx", `${event.clientX - rect.left}px`);
+        card.style.setProperty("--my", `${event.clientY - rect.top}px`);
+    }, { passive: true });
+}
+
+// ===== Nav: blur-on-scroll + active-section highlight (scrollspy) =====
+function setupNav() {
+    const nav = document.querySelector("nav");
+    const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    const links = [...document.querySelectorAll(".nav-links a[href^='#']")];
+    const spy = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const id = entry.target.id;
+            links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === `#${id}`));
+        });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    document.querySelectorAll("main section[id]").forEach(sec => spy.observe(sec));
+}
+
 // ===== Init =====
 document.getElementById("lang-toggle").addEventListener("click", () => {
     setLanguage(currentLang === "en" ? "tr" : "en");
@@ -331,4 +383,8 @@ renderRepos();
 startTyping();
 setupReveal();
 setupModal();
+setupNav();
+setupSpotlight();
+document.querySelectorAll(".skill-card").forEach(c => c.classList.add("card-enter"));
+document.querySelectorAll(".skills-grid").forEach(revealCards);
 fetchRepos();
