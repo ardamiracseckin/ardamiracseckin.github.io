@@ -17,7 +17,7 @@
     /* Text — one cool gray family */
     --text:          #e7e9ef;
     --text-muted:    #9ba1ad;
-    --text-faint:    #676d7b;
+    --text-faint:    #7f8695;
 
     /* Single accent: cool blue (sat < 80%) */
     --accent:        #5b7cfa;
@@ -170,18 +170,21 @@ nav.scrolled {
 .nav-links { display: flex; align-items: center; gap: 4px; }
 .nav-links a {
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--text-muted);
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
-    padding: 6px 12px;
+    padding: 0 12px;
     border-radius: 8px;
     transition: color 0.2s var(--ease);
 }
 .nav-links a::after {
     content: '';
     position: absolute;
-    left: 12px; right: 12px; bottom: 2px;
+    left: 12px; right: 12px; bottom: 9px;
     height: 1px;
     background: var(--accent);
     transform: scaleX(0);
@@ -195,11 +198,14 @@ nav.scrolled {
 
 #lang-toggle {
     margin-left: 10px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     background: var(--surface);
     color: var(--text);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 6px 13px;
+    padding: 0 13px;
     cursor: pointer;
     font-family: var(--mono);
     font-weight: 500;
@@ -626,6 +632,10 @@ footer {
 .close-btn {
     position: absolute;
     top: 16px; right: 20px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
     font-size: 1.7rem;
     cursor: pointer;
     color: var(--text-faint);
@@ -670,7 +680,7 @@ footer {
     section { padding: 56px 22px; }
 }
 @media (max-width: 560px) {
-    .nav-links a { padding: 6px 8px; font-size: 0.82rem; }
+    .nav-links a { padding: 0 8px; font-size: 0.82rem; }
     .nav-links { gap: 0; }
     #lang-toggle { margin-left: 6px; }
     .contact-btn { width: 100%; justify-content: center; }

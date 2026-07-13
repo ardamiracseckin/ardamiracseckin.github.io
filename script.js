@@ -289,12 +289,43 @@ function renderRepos() {
 }
 
 // ===== README modal =====
+let modalLastFocus = null;
+
+function closeModal() {
+    const modal = document.getElementById("readme-modal");
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
+    document.removeEventListener("keydown", handleModalKeydown);
+    if (modalLastFocus) { modalLastFocus.focus(); modalLastFocus = null; }
+}
+
+function handleModalKeydown(event) {
+    if (event.key === "Escape") { closeModal(); return; }
+    if (event.key !== "Tab") return;
+    // Focus trap: keep Tab cycling inside the dialog
+    const modal = document.getElementById("readme-modal");
+    const focusable = modal.querySelectorAll(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault(); last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault(); first.focus();
+    }
+}
+
 async function openReadme(repoName, repoUrl, defaultBranch) {
     const modal = document.getElementById("readme-modal");
     const contentDiv = document.getElementById("readme-content");
     document.getElementById("modal-repo-link").href = repoUrl;
 
+    modalLastFocus = document.activeElement;
     modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", handleModalKeydown);
+    document.getElementById("modal-close").focus();
     contentDiv.innerHTML = `<div class="status-msg">${t("modal.loading")}</div>`;
 
     try {
@@ -319,11 +350,9 @@ async function openReadme(repoName, repoUrl, defaultBranch) {
 function setupModal() {
     const modal = document.getElementById("readme-modal");
     modal.addEventListener("click", event => {
-        if (event.target === modal) modal.classList.remove("open");
+        if (event.target === modal) closeModal();
     });
-    document.getElementById("modal-close").addEventListener("click", () => {
-        modal.classList.remove("open");
-    });
+    document.getElementById("modal-close").addEventListener("click", closeModal);
 }
 
 // ===== Staggered card entrance =====
